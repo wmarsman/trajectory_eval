@@ -1,0 +1,21 @@
+# MIL training on JSONL trajectories (see data paths below).
+seed: 0
+# "auto" picks cuda if available, else cpu. Override: device=cuda or device=cpu
+device: cuda
+
+data:
+  # Paths relative to the parent of train/ (the package data tree) unless absolute.
+  train_jsonl: data/train.jsonl
+  val_jsonl: data/val.jsonl
+
+training:
+  # One trajectory (T, 3) per step; must be 1.
+  batch_size: 1
+  epochs: 100
+  lr: 0.01
+  num_workers: 0
+
+model:
+  # Count of ``Linear(·, hidden) + ReLU`` blocks; ``0`` = single ``Linear(3, 1)``.
+  num_hidden_layers: 2
+  hidden: 128
