@@ -46,3 +46,7 @@ The third function, `prediction_matches_target`, should determine if the model's
 ---
 
 To see how they are used, look at the training loop in [train/train.py](train/train.py).
+
+---
+
+[vscode.dev](https://vscode.dev/github/wmarsman/trajectory_eval) can be used to open this for editing in your browser.
