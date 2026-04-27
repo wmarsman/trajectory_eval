@@ -1,36 +1,45 @@
+"""MIL training: one trajectory per step; instance MLP; hybrid loss on that trajectory.
+
+- Merged row labels **1** or **2** (``y_mil==0``): BCE of **each** instance toward **1** (instance mean).
+- Row label **0** (``y_mil==1``): BCE of **min** instance score toward **0** (min only).
+"""
+
 from __future__ import annotations
 
 import random
 import sys
 from pathlib import Path
 
+# Parent of ``train/`` on path so ``from train.…`` works when run as ``python train/train.py``.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
 import hydra
 import torch
 import torch.nn as nn
-from ai.mil_yolox.dice_problem.train.dataset import (
-    N_FEATURES,
-    TrajectoryJsonlDataset,
-    collate_one_trajectory,
-)
-from ai.mil_yolox.dice_problem.train.mil import (
-    mil_hybrid_loss,
-    prediction_matches_target,
-    trajectory_mil_target,
-)
 from loguru import logger
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from tqdm import tqdm, trange
 
-# Parent of ``train/`` (package data directory for default relative JSONL paths).
-_TRAIN_PKG_ROOT = Path(__file__).resolve().parent.parent
+from train.dataset import (
+    N_FEATURES,
+    TrajectoryJsonlDataset,
+    collate_one_trajectory,
+)
+from train.mil import (
+    mil_hybrid_loss,
+    prediction_matches_target,
+    trajectory_mil_target,
+)
 
 
 def resolve_data_path(p: str) -> Path:
     path = Path(p)
     if path.is_absolute():
         return path
-    return (_TRAIN_PKG_ROOT / path).resolve()
+    return (_PROJECT_ROOT / path).resolve()
 
 
 class InstanceMlp(nn.Module):
